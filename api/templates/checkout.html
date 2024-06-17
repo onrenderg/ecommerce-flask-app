@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - My E-commerce Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <!-- Navigation -->
+        <nav class="flex justify-between items-center py-4">
+            <a href="/" class="text-2xl font-bold text-gray-800">My Store</a>
+            <div>
+                {% if logged_in %}
+                    <a href="/logout" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Logout</a>
+                {% else %}
+                    <a href="/register" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Register</a>
+                    <a href="/login" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Login</a>
+                {% endif %}
+                <a href="/cart" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900">Cart</a>
+            </div>
+        </nav>
+
+        <!-- Checkout Form -->
+        <section class="max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Checkout</h2>
+            <form id="checkout-form">
+                <div class="mb-4">
+                    <label for="card-number" class="block text-gray-700">Card Number</label>
+                    <input type="text" id="card-number" name="card-number" class="mt-1 px-4 py-2 w-full border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="card-holder-name" class="block text-gray-700">Card Holder Name</label>
+                    <input type="text" id="card-holder-name" name="card-holder-name" class="mt-1 px-4 py-2 w-full border rounded-lg">
+                </div>
+                <div class="mb-4">
+                    <label for="address" class="block text-gray-700">Address</label>
+                    <textarea id="address" name="address" class="mt-1 px-4 py-2 w-full border rounded-lg" rows="3"></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Submit</button>
+            </form>
+
+            <div id="checkout-response" class="mt-4"></div>
+        </section>
+    </div>
+
+    <script>
+        // Submit the checkout form and display the response
+        const checkoutForm = document.getElementById('checkout-form');
+        const checkoutResponse = document.getElementById('checkout-response');
+
+        checkoutForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(checkoutForm);
+
+            fetch('/checkout', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                checkoutResponse.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                checkoutResponse.innerHTML = '<p>An error occurred during checkout.</p>';
+            });
+        });
+    </script>
+
+</body>
+
+</html>
